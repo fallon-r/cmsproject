@@ -3,6 +3,8 @@ var inquirer = require("inquirer");
 var table = require("console.table");
 var figlet = require("figlet");
 var chalk = require("chalk");
+require('dotenv').config()
+
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -14,7 +16,7 @@ var connection = mysql.createConnection({
     user: "root",
 
     // Your password
-    password: "hunter2",
+    password: process.env.SQLPW,
     database: "cms_db"
 });
 
@@ -50,44 +52,33 @@ function runSearch() {
             type: "rawlist",
             message: "What would you like to do?",
             choices: [
-                "Find songs by artist",
-                "Find all artists who appear more than once",
-                "Find data within a specific range",
-                "Search for a specific song",
-                "Find artists with a top song and top album in the same year"
+                "Add Department",
+                "Add Roles",
+                "Add Employees",
+                "View Department",
+                "View Roles",
+                "View Employees",
+                "Update Employee Roles"
             ]
         })
         .then(function(answer) {
             switch (answer.action) {
-                case "Find songs by artist":
-                    artistSearch();
+                case "View Employees":
+                    staffSearch();
                     break;
 
-                case "Find all artists who appear more than once":
-                    multiSearch();
-                    break;
-
-                case "Find data within a specific range":
-                    rangeSearch();
-                    break;
-
-                case "Search for a specific song":
-                    songSearch();
-                    break;
-
-                case "Find artists with a top song and top album in the same year":
-                    songAndAlbumSearch();
-                    break;
+                
             }
         });
 }
 
-function artistSearch() {
+function staffSearch() {
     inquirer
         .prompt({
-            name: "artist",
-            type: "input",
-            message: "What artist would you like to search for?"
+            name: "staffSearchMethod",
+            type: "list",
+            message: "How would you like to search?",
+            choices: ['ID', 'First Name', 'Last Name']
         })
         .then(function(answer) {
             var query = "SELECT position, song, year FROM top5000 WHERE ?";
